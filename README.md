@@ -1102,8 +1102,6 @@ Untuk kebutuhan dukungan teknis, pengembangan, deployment, atau pemeliharaan App
 
 ## Apps Office 354
 
-**Integrated Office Management Platform**
-
 ### by PT Pandu Palapa Telematika
 
 © 2026 PT Pandu Palapa Telematika. All rights reserved.
