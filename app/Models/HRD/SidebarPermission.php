@@ -20,6 +20,7 @@ class SidebarPermission extends Model
 
     protected $fillable = [
         'employee_id',
+        'company_id',
         'menu_key',
         'can_view',
     ];

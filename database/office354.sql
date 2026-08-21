@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2026 at 06:46 AM
+-- Generation Time: Aug 21, 2026 at 02:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,25 +48,9 @@ CREATE TABLE `activity_logs` (
 --
 
 INSERT INTO `activity_logs` (`id`, `uuid`, `tenant_id`, `subject_type`, `subject_id`, `user_id`, `log_name`, `description`, `event`, `properties`, `ip_address`, `user_agent`, `created_at`) VALUES
-(234, '2556f1f4-2561-4643-9bdf-89ad8b13eaed', NULL, 'App\\Modules\\System\\Models\\User', 32, NULL, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 02:10:53'),
-(235, '6f3be487-41e2-4aa6-87ba-07476e397fcb', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 06:39:23'),
-(236, '1359a501-b68e-43a1-b5fc-81ed5920a6bb', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 06:40:45'),
-(237, '8f9f849f-1cf4-4087-bf72-569b9c842736', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 06:43:07'),
-(238, '7416e241-caff-49bb-9ec6-3d3b89e85cc1', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 06:43:18'),
-(239, '7323c2ea-9c4b-4aaa-a44b-1803f7c97541', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-20 07:54:49'),
-(240, '3e268158-b6a8-4748-af3e-86df707651d6', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 00:15:20'),
-(241, '8cf994c4-fae6-4e72-9d96-2d0d1de612a5', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'profile', 'Mengubah Foto Profile', 'updated', '{\"old_photo\":null,\"new_photo\":\"profile\\/1531f0b7-4a8c-481b-8dfb-5f35719e10ff.png\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 00:42:29'),
-(242, 'f3fffed6-91fa-41af-b7cb-78c77d8b2a09', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'profile', 'Menghapus Foto Profile', 'deleted', '{\"old_photo\":\"profile\\/1531f0b7-4a8c-481b-8dfb-5f35719e10ff.png\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 00:43:08'),
-(243, '570f9b25-a401-4c83-b238-ff52537d7000', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:44:57'),
-(244, '4b7853fc-5117-45cb-b2a1-8c7b25a99119', NULL, 'App\\Modules\\System\\Models\\User', 36, NULL, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:45:06'),
-(245, '48b29511-3e59-4bc8-a82b-8eeabcedce31', NULL, 'App\\Modules\\System\\Models\\User', 36, NULL, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:46:00'),
-(246, 'a472f3c1-07f5-4213-8b1e-38402e8d8b7f', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:46:11'),
-(247, 'ac49031d-219d-4510-8162-4e2d4765cc5e', NULL, 'App\\Models\\Backup', 7, 33, 'backup', 'Backup database berhasil dibuat', 'success', '{\"type\":\"success\",\"backup_id\":7,\"backup_type\":\"database\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:50:38'),
-(248, '5f7c4f9d-b9c8-4853-9c5f-a04ac1e05ccf', NULL, 'App\\Models\\Backup', 8, 33, 'backup', 'Backup file berhasil dibuat', 'success', '{\"type\":\"success\",\"backup_id\":8,\"backup_type\":\"file\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 01:51:09'),
-(252, '46d6fb72-005a-46f2-bc1d-d76ceebc6065', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 02:23:28'),
-(253, 'b721aa30-464b-4cf8-beaa-d5783be6cb31', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 02:26:07'),
-(254, '924dd4f5-b4e3-41de-9d77-cd70c44e80b0', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 03:27:14'),
-(255, 'baa02edf-da57-4f56-906d-3f1914f47d9f', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 03:32:44');
+(262, '8f991a36-a5a5-4e98-8679-4fd7e6d2353c', NULL, 'App\\Models\\Backup', 10, 33, 'backup', 'Backup file berhasil dibuat', 'success', '{\"type\":\"success\",\"backup_id\":10,\"backup_type\":\"file\"}', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 11:16:47'),
+(263, '05d6dc0d-0d0b-43bc-b640-581a49baf182', NULL, 'App\\Modules\\System\\Models\\User', 33, 33, 'auth', 'Logged out', 'logout', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 11:17:34'),
+(264, '2d7fe083-8d3b-4ef3-b8bc-8236f8da4338', NULL, 'App\\Modules\\System\\Models\\User', 37, NULL, 'auth', 'Logged in', 'login', '[]', '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36', '2026-08-21 11:17:42');
 
 -- --------------------------------------------------------
 
@@ -374,13 +358,6 @@ CREATE TABLE `backup_settings` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `backup_settings`
---
-
-INSERT INTO `backup_settings` (`id`, `uuid`, `company_id`, `schedule_type`, `backup_time`, `backup_day`, `retention_count`, `disk`, `compress`, `is_enabled`, `last_backup_at`, `created_by`, `updated_by`, `created_at`, `updated_at`) VALUES
-(7, '71046ac4-784f-4f7f-a484-efcb2e8426b6', NULL, 'manual', '01:00:00', NULL, 7, 'local', 1, 0, NULL, NULL, NULL, '2026-08-21 02:45:11', '2026-08-21 02:45:11');
-
 -- --------------------------------------------------------
 
 --
@@ -398,10 +375,11 @@ CREATE TABLE `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('office-354-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1787286823),
-('office-354-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1787286823;', 1787286823),
-('office-354-cache-guest_company_logo_favicon', 'a:4:{s:8:\"logo_url\";N;s:11:\"favicon_url\";N;s:9:\"logo_path\";N;s:12:\"favicon_path\";N;}', 1787290035),
-('office-354-cache-sidebar_menu_config_v8', 'a:4:{i:0;a:10:{s:3:\"key\";s:9:\"dashboard\";s:5:\"label\";s:7:\"Beranda\";s:4:\"icon\";s:7:\"fa-home\";s:10:\"icon_class\";s:16:\"fa-solid fa-home\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:9:\"dashboard\";s:14:\"permission_key\";s:17:\"sidebar.dashboard\";s:5:\"group\";N;s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:14:\"projects_tasks\";s:5:\"label\";s:14:\"Proyek & Tugas\";s:4:\"icon\";s:12:\"fa-briefcase\";s:10:\"icon_class\";s:21:\"fa-solid fa-briefcase\";s:4:\"type\";s:5:\"group\";s:5:\"route\";N;s:14:\"permission_key\";N;s:5:\"group\";s:14:\"projects_tasks\";s:10:\"is_visible\";b:0;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:5:\"staff\";s:5:\"label\";s:12:\"Administrasi\";s:4:\"icon\";s:8:\"fa-users\";s:10:\"icon_class\";s:17:\"fa-solid fa-users\";s:4:\"type\";s:5:\"group\";s:5:\"route\";N;s:14:\"permission_key\";N;s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:4:{i:0;a:10:{s:3:\"key\";s:15:\"staff_dashboard\";s:5:\"label\";s:5:\"Staff\";s:4:\"icon\";s:8:\"fa-gauge\";s:10:\"icon_class\";s:17:\"fa-solid fa-gauge\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:22:\"administrasi.dashboard\";s:14:\"permission_key\";s:23:\"sidebar.staff_dashboard\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:0;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:9:\"employees\";s:5:\"label\";s:13:\"Data Karyawan\";s:4:\"icon\";s:7:\"fa-user\";s:10:\"icon_class\";s:16:\"fa-solid fa-user\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:32:\"administrasi.data_karyawan.index\";s:14:\"permission_key\";s:17:\"sidebar.employees\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:11:\"attendances\";s:5:\"label\";s:7:\"Absensi\";s:4:\"icon\";s:17:\"fa-calendar-check\";s:10:\"icon_class\";s:26:\"fa-solid fa-calendar-check\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:24:\"administrasi.absen.index\";s:14:\"permission_key\";s:19:\"sidebar.attendances\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:3;a:10:{s:3:\"key\";s:13:\"staff_reports\";s:5:\"label\";s:7:\"Laporan\";s:4:\"icon\";s:12:\"fa-chart-bar\";s:10:\"icon_class\";s:21:\"fa-solid fa-chart-bar\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:26:\"administrasi.laporan.index\";s:14:\"permission_key\";s:21:\"sidebar.staff_reports\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}}}i:3;a:11:{s:3:\"key\";s:8:\"atur_crm\";s:5:\"label\";s:10:\"Pengaturan\";s:4:\"icon\";s:7:\"fa-cogs\";s:10:\"icon_class\";s:16:\"fa-solid fa-cogs\";s:4:\"type\";s:5:\"group\";s:5:\"route\";s:8:\"atur_crm\";s:14:\"permission_key\";N;s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:11:\"redirect_to\";s:21:\"pengaturan.umum.index\";s:8:\"children\";a:3:{i:0;a:10:{s:3:\"key\";s:6:\"backup\";s:5:\"label\";s:6:\"Backup\";s:4:\"icon\";s:11:\"fa-download\";s:10:\"icon_class\";s:20:\"fa-solid fa-download\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:23:\"pengaturan.backup.index\";s:14:\"permission_key\";s:14:\"sidebar.backup\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:9:\"hak_akses\";s:5:\"label\";s:9:\"Hak Akses\";s:4:\"icon\";s:14:\"fa-user-shield\";s:10:\"icon_class\";s:23:\"fa-solid fa-user-shield\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:26:\"pengaturan.hak_akses.index\";s:14:\"permission_key\";s:17:\"sidebar.hak_akses\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:16:\"master_data_umum\";s:5:\"label\";s:4:\"Umum\";s:4:\"icon\";s:12:\"fa-sliders-h\";s:10:\"icon_class\";s:21:\"fa-solid fa-sliders-h\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:21:\"pengaturan.umum.index\";s:14:\"permission_key\";s:24:\"sidebar.master_data_umum\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}}}}', 1787372813);
+('office354-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1787314722),
+('office354-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1787314722;', 1787314722),
+('office354-cache-guest_company_logo_favicon', 'a:4:{s:8:\"logo_url\";N;s:11:\"favicon_url\";N;s:9:\"logo_path\";N;s:12:\"favicon_path\";N;}', 1787318254),
+('office354-cache-sidebar_menu_config_v8', 'a:4:{i:0;a:10:{s:3:\"key\";s:9:\"dashboard\";s:5:\"label\";s:7:\"Beranda\";s:4:\"icon\";s:7:\"fa-home\";s:10:\"icon_class\";s:16:\"fa-solid fa-home\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:9:\"dashboard\";s:14:\"permission_key\";s:17:\"sidebar.dashboard\";s:5:\"group\";N;s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:14:\"projects_tasks\";s:5:\"label\";s:14:\"Proyek & Tugas\";s:4:\"icon\";s:12:\"fa-briefcase\";s:10:\"icon_class\";s:21:\"fa-solid fa-briefcase\";s:4:\"type\";s:5:\"group\";s:5:\"route\";N;s:14:\"permission_key\";N;s:5:\"group\";s:14:\"projects_tasks\";s:10:\"is_visible\";b:0;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:5:\"staff\";s:5:\"label\";s:12:\"Administrasi\";s:4:\"icon\";s:8:\"fa-users\";s:10:\"icon_class\";s:17:\"fa-solid fa-users\";s:4:\"type\";s:5:\"group\";s:5:\"route\";N;s:14:\"permission_key\";N;s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:4:{i:0;a:10:{s:3:\"key\";s:15:\"staff_dashboard\";s:5:\"label\";s:5:\"Staff\";s:4:\"icon\";s:8:\"fa-gauge\";s:10:\"icon_class\";s:17:\"fa-solid fa-gauge\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:22:\"administrasi.dashboard\";s:14:\"permission_key\";s:23:\"sidebar.staff_dashboard\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:0;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:9:\"employees\";s:5:\"label\";s:13:\"Data Karyawan\";s:4:\"icon\";s:7:\"fa-user\";s:10:\"icon_class\";s:16:\"fa-solid fa-user\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:32:\"administrasi.data_karyawan.index\";s:14:\"permission_key\";s:17:\"sidebar.employees\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:11:\"attendances\";s:5:\"label\";s:7:\"Absensi\";s:4:\"icon\";s:17:\"fa-calendar-check\";s:10:\"icon_class\";s:26:\"fa-solid fa-calendar-check\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:24:\"administrasi.absen.index\";s:14:\"permission_key\";s:19:\"sidebar.attendances\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:3;a:10:{s:3:\"key\";s:13:\"staff_reports\";s:5:\"label\";s:7:\"Laporan\";s:4:\"icon\";s:12:\"fa-chart-bar\";s:10:\"icon_class\";s:21:\"fa-solid fa-chart-bar\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:26:\"administrasi.laporan.index\";s:14:\"permission_key\";s:21:\"sidebar.staff_reports\";s:5:\"group\";s:5:\"staff\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}}}i:3;a:11:{s:3:\"key\";s:8:\"atur_crm\";s:5:\"label\";s:10:\"Pengaturan\";s:4:\"icon\";s:7:\"fa-cogs\";s:10:\"icon_class\";s:16:\"fa-solid fa-cogs\";s:4:\"type\";s:5:\"group\";s:5:\"route\";s:8:\"atur_crm\";s:14:\"permission_key\";N;s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:11:\"redirect_to\";s:21:\"pengaturan.umum.index\";s:8:\"children\";a:3:{i:0;a:10:{s:3:\"key\";s:6:\"backup\";s:5:\"label\";s:6:\"Backup\";s:4:\"icon\";s:11:\"fa-download\";s:10:\"icon_class\";s:20:\"fa-solid fa-download\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:23:\"pengaturan.backup.index\";s:14:\"permission_key\";s:14:\"sidebar.backup\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:1;a:10:{s:3:\"key\";s:9:\"hak_akses\";s:5:\"label\";s:9:\"Hak Akses\";s:4:\"icon\";s:14:\"fa-user-shield\";s:10:\"icon_class\";s:23:\"fa-solid fa-user-shield\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:26:\"pengaturan.hak_akses.index\";s:14:\"permission_key\";s:17:\"sidebar.hak_akses\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}i:2;a:10:{s:3:\"key\";s:16:\"master_data_umum\";s:5:\"label\";s:4:\"Umum\";s:4:\"icon\";s:12:\"fa-sliders-h\";s:10:\"icon_class\";s:21:\"fa-solid fa-sliders-h\";s:4:\"type\";s:4:\"item\";s:5:\"route\";s:21:\"pengaturan.umum.index\";s:14:\"permission_key\";s:24:\"sidebar.master_data_umum\";s:5:\"group\";s:8:\"atur_crm\";s:10:\"is_visible\";b:1;s:8:\"children\";a:0:{}}}}}', 1787388778),
+('office354-cache-user_permissions_37', 'a:8:{s:8:\"projects\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:5:\"tasks\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:9:\"employees\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:11:\"attendances\";a:6:{s:9:\"scope_own\";b:1;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:1;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:13:\"staff_reports\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:6:\"backup\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:9:\"hak_akses\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}s:16:\"master_data_umum\";a:6:{s:9:\"scope_own\";b:0;s:12:\"scope_global\";b:0;s:8:\"can_view\";b:0;s:10:\"can_create\";b:0;s:10:\"can_update\";b:0;s:10:\"can_delete\";b:0;}}', 1787318247);
 
 -- --------------------------------------------------------
 
@@ -665,20 +643,6 @@ CREATE TABLE `crm_user_permissions_v2` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `crm_user_permissions_v2`
---
-
-INSERT INTO `crm_user_permissions_v2` (`id`, `user_id`, `module`, `scope_own`, `scope_global`, `can_view`, `can_create`, `can_update`, `can_delete`, `created_at`, `updated_at`) VALUES
-(942, 36, 'projects', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(943, 36, 'tasks', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(944, 36, 'employees', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(945, 36, 'attendances', 1, 0, 1, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(946, 36, 'staff_reports', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(947, 36, 'backup', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(948, 36, 'hak_akses', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47'),
-(949, 36, 'master_data_umum', 0, 0, 0, 0, 0, 0, '2026-08-21 01:44:47', '2026-08-21 01:44:47');
 
 -- --------------------------------------------------------
 
@@ -1402,14 +1366,6 @@ CREATE TABLE `model_has_roles` (
   `model_id` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `model_has_roles`
---
-
-INSERT INTO `model_has_roles` (`role_id`, `model_type`, `model_id`) VALUES
-(9, 'App\\Modules\\System\\Models\\User', 32),
-(9, 'App\\Modules\\System\\Models\\User', 33);
-
 -- --------------------------------------------------------
 
 --
@@ -1582,14 +1538,6 @@ CREATE TABLE `positions` (
   `deleted_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `positions`
---
-
-INSERT INTO `positions` (`id`, `company_id`, `department_id`, `division_id`, `name`, `code`, `description`, `level`, `parent_id`, `is_active`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(6, 12, NULL, NULL, 'STAFF', 'STF', 'TEST', 'Staff', NULL, 1, '2026-08-21 01:03:31', '2026-08-21 01:03:35', '2026-08-21 01:03:35'),
-(7, 12, NULL, NULL, 'STAFF', 'STF', '123', 'Staff', NULL, 1, '2026-08-21 01:04:10', '2026-08-21 01:04:10', NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -1670,13 +1618,6 @@ CREATE TABLE `roles` (
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `roles`
---
-
-INSERT INTO `roles` (`id`, `name`, `guard_name`, `created_at`, `updated_at`) VALUES
-(9, 'developer', 'web', '2026-08-20 02:06:42', '2026-08-20 02:06:42');
-
 -- --------------------------------------------------------
 
 --
@@ -1722,13 +1663,6 @@ CREATE TABLE `salaries` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
---
--- Dumping data for table `salaries`
---
-
-INSERT INTO `salaries` (`id`, `user_id`, `employee_id`, `company_id`, `period_year`, `period_month`, `basic_salary`, `allowances`, `deductions`, `late_deduction`, `bpjs_employee`, `bpjs_company`, `tax`, `other_deduction`, `payment_method`, `total_salary`, `payment_date`, `payment_status`, `bank_name`, `bank_account_number`, `bank_account_holder`, `approved_by`, `approved_at`, `notes`, `created_at`, `updated_at`) VALUES
-(12, NULL, 30, 12, '2026', 8, 1500000.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 'bank_transfer', 1500000.00, NULL, 'pending', NULL, NULL, NULL, NULL, NULL, '{\"allowances\":[],\"deductions\":[],\"payment_method\":\"bank_transfer\"}', '2026-08-21 01:44:24', '2026-08-21 01:47:05');
 
 -- --------------------------------------------------------
 
@@ -1942,7 +1876,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `company_id`, `division_id`, `company_role`, `avatar`, `uuid`, `tenant_id`, `name`, `username`, `email`, `email_verified_at`, `password`, `remember_token`, `avatar_url`, `profile_photo`, `phone`, `employee_id`, `nik`, `kk_number`, `birth_place`, `birth_date`, `gender`, `religion`, `address`, `province`, `city`, `district`, `village`, `postal_code`, `ktp_address`, `blood_type`, `marital_status`, `emergency_contact_name`, `emergency_contact_phone`, `emergency_contact_relation`, `bank_name`, `bank_account_number`, `bank_account_name`, `bpjs_number`, `npwp_number`, `father_name`, `mother_name`, `mother_maiden_name`, `user_type`, `is_active`, `is_owner`, `department`, `position`, `last_login_at`, `last_login_ip`, `password_changed_at`, `preferences`, `metadata`, `sidebar_permissions`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(33, NULL, NULL, NULL, NULL, '9e8ec3d5-c192-40d3-8d62-ab49622ac8bb', 12, 'Administrator', 'admin', 'admin@papatel.co.id', '2026-08-20 06:38:47', '$2y$12$56cfBB9D9miMiG3/0bkz5ue6ILK3fZqVkz1L4V1M5pE6lFzi1qviK', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'developer', 1, 0, NULL, NULL, '2026-08-21 03:32:44', '127.0.0.1', NULL, NULL, NULL, '[\"sidebar.dashboard\",\"sidebar.staff_dashboard\",\"sidebar.employees\",\"sidebar.attendances\",\"sidebar.staff_reports\",\"sidebar.backup\",\"sidebar.hak_akses\",\"sidebar.master_data_umum\"]', NULL, NULL, '2026-08-20 06:38:47', '2026-08-21 03:32:44', NULL);
+(33, NULL, NULL, NULL, NULL, '9e8ec3d5-c192-40d3-8d62-ab49622ac8bb', 13, 'Administrator', 'admin', 'admin@office354.com', '2026-08-20 06:38:47', '$2y$12$56cfBB9D9miMiG3/0bkz5ue6ILK3fZqVkz1L4V1M5pE6lFzi1qviK', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'developer', 1, 0, NULL, NULL, '2026-08-21 09:57:44', '127.0.0.1', NULL, NULL, NULL, '[\"sidebar.dashboard\",\"sidebar.staff_dashboard\",\"sidebar.employees\",\"sidebar.attendances\",\"sidebar.staff_reports\",\"sidebar.backup\",\"sidebar.hak_akses\",\"sidebar.master_data_umum\"]', NULL, NULL, '2026-08-20 06:38:47', '2026-08-21 10:00:34', NULL);
 
 -- --------------------------------------------------------
 
@@ -2804,7 +2738,7 @@ ALTER TABLE `work_updates`
 -- AUTO_INCREMENT for table `activity_logs`
 --
 ALTER TABLE `activity_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=256;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=265;
 
 --
 -- AUTO_INCREMENT for table `addresses`
@@ -2828,7 +2762,7 @@ ALTER TABLE `attachments`
 -- AUTO_INCREMENT for table `attendances`
 --
 ALTER TABLE `attendances`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=130;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=131;
 
 --
 -- AUTO_INCREMENT for table `attendance_histories`
@@ -2852,19 +2786,19 @@ ALTER TABLE `attendance_settings`
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `backups`
 --
 ALTER TABLE `backups`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `backup_settings`
 --
 ALTER TABLE `backup_settings`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `clients`
@@ -2882,13 +2816,13 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT for table `companies`
 --
 ALTER TABLE `companies`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `company_notifications`
 --
 ALTER TABLE `company_notifications`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=140;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=145;
 
 --
 -- AUTO_INCREMENT for table `company_subscriptions`
@@ -2924,7 +2858,7 @@ ALTER TABLE `crm_user_permissions`
 -- AUTO_INCREMENT for table `crm_user_permissions_v2`
 --
 ALTER TABLE `crm_user_permissions_v2`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=950;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=958;
 
 --
 -- AUTO_INCREMENT for table `currencies`
@@ -2936,13 +2870,13 @@ ALTER TABLE `currencies`
 -- AUTO_INCREMENT for table `departments`
 --
 ALTER TABLE `departments`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `divisions`
 --
 ALTER TABLE `divisions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `employee_account_link_requests`
@@ -2960,13 +2894,13 @@ ALTER TABLE `employee_documents`
 -- AUTO_INCREMENT for table `employee_placements`
 --
 ALTER TABLE `employee_placements`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `employee_profiles`
 --
 ALTER TABLE `employee_profiles`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT for table `employee_salary_components`
@@ -2978,13 +2912,13 @@ ALTER TABLE `employee_salary_components`
 -- AUTO_INCREMENT for table `employee_sidebar_permissions`
 --
 ALTER TABLE `employee_sidebar_permissions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=507;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=516;
 
 --
 -- AUTO_INCREMENT for table `employee_types`
 --
 ALTER TABLE `employee_types`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT for table `estimates`
@@ -3128,7 +3062,7 @@ ALTER TABLE `plans`
 -- AUTO_INCREMENT for table `positions`
 --
 ALTER TABLE `positions`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `recruitments`
@@ -3152,7 +3086,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `salaries`
 --
 ALTER TABLE `salaries`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `shifts`
@@ -3182,13 +3116,13 @@ ALTER TABLE `tags`
 -- AUTO_INCREMENT for table `tenants`
 --
 ALTER TABLE `tenants`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `webhook_configs`

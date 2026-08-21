@@ -330,7 +330,6 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kode</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Manager</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Jumlah Karyawan</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
@@ -343,19 +342,18 @@
                                             <span class="font-medium text-gray-900" x-text="dept.name"></span>
                                         </td>
                                         <td class="px-6 py-4 text-gray-600" x-text="dept.code || '-'"></td>
-                                        <td class="px-6 py-4 text-gray-600" x-text="dept.manager_name || '-'"></td>
                                         <td class="px-6 py-4 text-gray-600" x-text="dept.employee_count || 0"></td>
                                         <td class="px-6 py-4">
-                                            <span :class="dept.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'" 
-                                                  class="px-2.5 py-1 text-xs font-medium rounded-full" 
+                                            <span :class="dept.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+                                                  class="px-2.5 py-1 text-xs font-medium rounded-full"
                                                   x-text="dept.is_active ? 'Aktif' : 'Tidak Aktif'"></span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <button @click="editDepartment(dept)" 
+                                            <button @click="editDepartment(dept)"
                                                     class="text-indigo-600 hover:text-indigo-900 mr-3 transition-colors">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button @click="deleteDepartment(dept.id)" 
+                                            <button @click="deleteDepartment(dept.id)"
                                                     class="text-red-600 hover:text-red-900 transition-colors">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -364,7 +362,7 @@
                                 </template>
                                 <template x-if="filteredDepartments.length === 0">
                                     <tr>
-                                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                        <td colspan="5" class="px-6 py-12 text-center text-gray-500">
                                             <i class="fas fa-inbox text-4xl mb-3"></i>
                                             <p>Tidak ada data departemen</p>
                                         </td>
@@ -589,8 +587,6 @@
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Nama</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Kode</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Tipe</th>
-                                    <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Durasi Kontrak</th>
                                     <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
                                     <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Aksi</th>
                                 </tr>
@@ -603,22 +599,16 @@
                                         </td>
                                         <td class="px-6 py-4 text-gray-600" x-text="type.code || '-'"></td>
                                         <td class="px-6 py-4">
-                                            <span :class="type.employee_type === 'permanent' ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'" 
-                                                  class="px-2.5 py-1 text-xs font-medium rounded-full" 
-                                                  x-text="type.employee_type === 'permanent' ? 'Tetap' : 'Kontrak'"></span>
-                                        </td>
-                                        <td class="px-6 py-4 text-gray-600" x-text="type.contract_duration ? type.contract_duration + ' bulan' : '-'"></td>
-                                        <td class="px-6 py-4">
-                                            <span :class="type.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'" 
-                                                  class="px-2.5 py-1 text-xs font-medium rounded-full" 
+                                            <span :class="type.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+                                                  class="px-2.5 py-1 text-xs font-medium rounded-full"
                                                   x-text="type.is_active ? 'Aktif' : 'Tidak Aktif'"></span>
                                         </td>
                                         <td class="px-6 py-4 text-right">
-                                            <button @click="editEmployeeType(type)" 
+                                            <button @click="editEmployeeType(type)"
                                                     class="text-indigo-600 hover:text-indigo-900 mr-3 transition-colors">
                                                 <i class="fas fa-edit"></i>
                                             </button>
-                                            <button @click="deleteEmployeeType(type.id)" 
+                                            <button @click="deleteEmployeeType(type.id)"
                                                     class="text-red-600 hover:text-red-900 transition-colors">
                                                 <i class="fas fa-trash"></i>
                                             </button>
@@ -627,7 +617,7 @@
                                 </template>
                                 <template x-if="filteredEmployeeTypes.length === 0">
                                     <tr>
-                                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                                        <td colspan="4" class="px-6 py-12 text-center text-gray-500">
                                             <i class="fas fa-inbox text-4xl mb-3"></i>
                                             <p>Tidak ada data status karyawan</p>
                                         </td>
@@ -756,7 +746,6 @@
             <form @submit.prevent="saveDepartment()" class="p-6 space-y-4">
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Nama *</label><input type="text" x-model="departmentForm.name" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Kode</label><input type="text" x-model="departmentForm.code" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Manager</label><input type="text" x-model="departmentForm.manager_name" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label><textarea x-model="departmentForm.description" rows="2" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></textarea></div>
                 <div class="flex items-center"><input type="checkbox" x-model="departmentForm.is_active" id="dept_active" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"><label for="dept_active" class="ml-2 text-sm text-gray-700">Aktif</label></div>
                 <div class="flex justify-end gap-3 pt-4"><button type="button" @click="departmentModalOpen = false" class="px-4 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Batal</button><button type="submit" class="px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">Simpan</button></div>
@@ -816,8 +805,6 @@
             <form @submit.prevent="saveEmployeeType()" class="p-6 space-y-4">
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Nama *</label><input type="text" x-model="employeeTypeForm.name" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Kode</label><input type="text" x-model="employeeTypeForm.code" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Tipe *</label><select x-model="employeeTypeForm.employee_type" required class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900"><option value="permanent">Karyawan Tetap</option><option value="contract">Karyawan Kontrak</option></select></div>
-                <div><label class="block text-sm font-medium text-gray-700 mb-1">Durasi Kontrak (bulan)</label><input type="number" x-model="employeeTypeForm.contract_duration" min="0" placeholder="Kosongkan jika tetap" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></div>
                 <div><label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label><textarea x-model="employeeTypeForm.description" rows="2" class="w-full px-4 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white text-gray-900 placeholder-gray-400"></textarea></div>
                 <div class="flex items-center"><input type="checkbox" x-model="employeeTypeForm.is_active" id="etype_active" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"><label for="etype_active" class="ml-2 text-sm text-gray-700">Aktif</label></div>
                 <div class="flex justify-end gap-3 pt-4"><button type="button" @click="employeeTypeModalOpen = false" class="px-4 py-2.5 border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Batal</button><button type="submit" class="px-4 py-2.5 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">Simpan</button></div>
@@ -905,7 +892,6 @@ function masterDataManager() {
             name: '',
             code: '',
             description: '',
-            manager_name: '',
             is_active: true
         },
         
@@ -948,9 +934,7 @@ function masterDataManager() {
         employeeTypeForm: {
             name: '',
             code: '',
-            employee_type: 'permanent',
             description: '',
-            contract_duration: null,
             is_active: true
         },
         
@@ -1052,8 +1036,8 @@ function masterDataManager() {
         
         openDepartmentModal(dept = null) {
             this.editingDepartment = dept;
-            this.departmentForm = dept ? Object.assign({}, dept) : { 
-                name: '', code: '', description: '', manager_name: '', is_active: true 
+            this.departmentForm = dept ? Object.assign({}, dept) : {
+                name: '', code: '', description: '', is_active: true
             };
             this.departmentModalOpen = true;
         },
@@ -1366,8 +1350,8 @@ function masterDataManager() {
         
         openEmployeeTypeModal(type = null) {
             this.editingEmployeeType = type;
-            this.employeeTypeForm = type ? Object.assign({}, type) : { 
-                name: '', code: '', employee_type: 'permanent', description: '', contract_duration: null, is_active: true 
+            this.employeeTypeForm = type ? Object.assign({}, type) : {
+                name: '', code: '', description: '', is_active: true
             };
             this.employeeTypeModalOpen = true;
         },

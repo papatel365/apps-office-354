@@ -90,7 +90,8 @@ class SidebarPermissionService
 
     /**
      * Save permissions for an employee.
-     * This will sync the permissions - delete ones not in the list, add/update the ones that are.
+     * Uses updateOrCreate to avoid duplicate entry errors.
+     * Explicitly passes company_id to ensure proper scoping.
      *
      * @param int $employeeId
      * @param array $enabledMenuKeys Array of menu keys that should be enabled
@@ -99,16 +100,22 @@ class SidebarPermissionService
     {
         $allKeys = $this->getAllPermissionKeys();
 
-        // Delete all existing permissions first
-        SidebarPermission::forEmployee($employeeId)->delete();
+        // Get company_id from employee to ensure proper scoping
+        $employee = \App\Models\HRD\EmployeeProfile::find($employeeId);
+        $companyId = $employee?->company_id;
 
-        // Create new permissions
+        // Use updateOrCreate with explicit company_id to avoid UNIQUE constraint violations
         foreach ($allKeys as $menuKey) {
-            SidebarPermission::create([
-                'employee_id' => $employeeId,
-                'menu_key' => $menuKey,
-                'can_view' => in_array($menuKey, $enabledMenuKeys),
-            ]);
+            SidebarPermission::updateOrCreate(
+                [
+                    'employee_id' => $employeeId,
+                    'company_id' => $companyId,
+                    'menu_key' => $menuKey,
+                ],
+                [
+                    'can_view' => in_array($menuKey, $enabledMenuKeys),
+                ]
+            );
         }
     }
 
@@ -123,10 +130,15 @@ class SidebarPermissionService
     {
         $allKeys = $this->getAllPermissionKeys();
 
+        // Get company_id from employee to ensure proper scoping
+        $employee = \App\Models\HRD\EmployeeProfile::find($employeeId);
+        $companyId = $employee?->company_id;
+
         foreach ($allKeys as $menuKey) {
             SidebarPermission::updateOrCreate(
                 [
                     'employee_id' => $employeeId,
+                    'company_id' => $companyId,
                     'menu_key' => $menuKey,
                 ],
                 [
