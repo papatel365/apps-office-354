@@ -464,7 +464,9 @@ Untuk development, `APP_DEBUG=true` dapat digunakan.
 
 Setelah file .env selesai dikonfigurasi, jalankan:
 
+```bash
 php artisan key:generate
+```
 
 Jika berhasil, akan muncul pesan bahwa application key telah berhasil dibuat.
 
