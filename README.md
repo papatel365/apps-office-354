@@ -1040,49 +1040,6 @@ public/build/
 
 ---
 
-# 🔄 Version Control
-
-Apps Office 354 menggunakan Git sebagai sistem version control.
-
-Contoh workflow:
-
-```text
-Create Branch
-     ↓
-Development
-     ↓
-Testing
-     ↓
-Code Review
-     ↓
-Pull Request
-     ↓
-Merge
-     ↓
-Release
-```
-
-Contoh membuat branch:
-
-```bash
-git checkout -b feature/nama-fitur
-```
-
-Contoh commit:
-
-```bash
-git add .
-git commit -m "feat: add new feature"
-```
-
-Kemudian:
-
-```bash
-git push
-```
-
----
-
 # 🤝 Contribution
 
 Pengembangan Apps Office 354 dikelola oleh:
