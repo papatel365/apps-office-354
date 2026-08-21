@@ -474,6 +474,8 @@ APP_KEY=base64:xxxxxxxxxxxxxxxxxxxxxxxx
 
 Jangan membagikan APP_KEY kepada publik.
 
+---
+
 # STEP 11 — Bersihkan Cache Laravel
 
 Jalankan:
