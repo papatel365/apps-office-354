@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 21, 2026 at 06:46 AM
+-- Generation Time: Aug 21, 2026 at 08:26 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -1942,7 +1942,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `company_id`, `division_id`, `company_role`, `avatar`, `uuid`, `tenant_id`, `name`, `username`, `email`, `email_verified_at`, `password`, `remember_token`, `avatar_url`, `profile_photo`, `phone`, `employee_id`, `nik`, `kk_number`, `birth_place`, `birth_date`, `gender`, `religion`, `address`, `province`, `city`, `district`, `village`, `postal_code`, `ktp_address`, `blood_type`, `marital_status`, `emergency_contact_name`, `emergency_contact_phone`, `emergency_contact_relation`, `bank_name`, `bank_account_number`, `bank_account_name`, `bpjs_number`, `npwp_number`, `father_name`, `mother_name`, `mother_maiden_name`, `user_type`, `is_active`, `is_owner`, `department`, `position`, `last_login_at`, `last_login_ip`, `password_changed_at`, `preferences`, `metadata`, `sidebar_permissions`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES
-(33, NULL, NULL, NULL, NULL, '9e8ec3d5-c192-40d3-8d62-ab49622ac8bb', 12, 'Administrator', 'admin', 'admin@papatel.co.id', '2026-08-20 06:38:47', '$2y$12$56cfBB9D9miMiG3/0bkz5ue6ILK3fZqVkz1L4V1M5pE6lFzi1qviK', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'developer', 1, 0, NULL, NULL, '2026-08-21 03:32:44', '127.0.0.1', NULL, NULL, NULL, '[\"sidebar.dashboard\",\"sidebar.staff_dashboard\",\"sidebar.employees\",\"sidebar.attendances\",\"sidebar.staff_reports\",\"sidebar.backup\",\"sidebar.hak_akses\",\"sidebar.master_data_umum\"]', NULL, NULL, '2026-08-20 06:38:47', '2026-08-21 03:32:44', NULL);
+(33, NULL, NULL, NULL, NULL, '9e8ec3d5-c192-40d3-8d62-ab49622ac8bb', 12, 'Administrator', 'admin', 'admin@office354.com', '2026-08-20 06:38:47', '$2y$12$56cfBB9D9miMiG3/0bkz5ue6ILK3fZqVkz1L4V1M5pE6lFzi1qviK', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'developer', 1, 0, NULL, NULL, '2026-08-21 03:32:44', '127.0.0.1', NULL, NULL, NULL, '[\"sidebar.dashboard\",\"sidebar.staff_dashboard\",\"sidebar.employees\",\"sidebar.attendances\",\"sidebar.staff_reports\",\"sidebar.backup\",\"sidebar.hak_akses\",\"sidebar.master_data_umum\"]', NULL, NULL, '2026-08-20 06:38:47', '2026-08-21 03:32:44', NULL);
 
 -- --------------------------------------------------------
 
