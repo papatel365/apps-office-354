@@ -737,7 +737,7 @@ class CompanyController extends Controller
             ], 404);
         }
 
-        // Validate only fields that exist in the companies table
+        // Validate text fields
         $validated = $request->validate([
             'name' => 'nullable|string|max:255',
             'alias' => 'nullable|string|max:100', // alias maps to short_name
@@ -747,6 +747,14 @@ class CompanyController extends Controller
             'address' => 'nullable|string|max:500',
             'npwp' => 'nullable|string|max:32',
             'footer_text' => 'nullable|string|max:500',
+        ]);
+
+        // Validate file uploads
+        $fileValidation = $request->validate([
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg,svg|max:2048', // 2MB max
+            'favicon' => 'nullable|image|mimes:png,ico,svg|max:512', // 512KB max
+            'remove_logo' => 'nullable|string|in:1,0',
+            'remove_favicon' => 'nullable|string|in:1,0',
         ]);
 
         // Map alias to short_name
@@ -780,14 +788,58 @@ class CompanyController extends Controller
             $updateData['footer_text'] = $validated['footer_text'];
         }
 
+        // Handle logo upload
+        $removeLogo = $request->input('remove_logo') === '1';
+        if ($request->hasFile('logo')) {
+            $logo = $request->file('logo');
+            $logoPath = $logo->store('companies/logos', 'public');
+            $updateData['logo'] = $logoPath;
+
+            // Delete old logo file if exists
+            if ($company->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($company->logo)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($company->logo);
+            }
+        } elseif ($removeLogo) {
+            // Remove logo if requested
+            if ($company->logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($company->logo)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($company->logo);
+            }
+            $updateData['logo'] = null;
+        }
+
+        // Handle favicon upload
+        $removeFavicon = $request->input('remove_favicon') === '1';
+        if ($request->hasFile('favicon')) {
+            $favicon = $request->file('favicon');
+            $faviconPath = $favicon->store('companies/favicons', 'public');
+            $updateData['favicon'] = $faviconPath;
+
+            // Delete old favicon file if exists
+            if ($company->favicon && \Illuminate\Support\Facades\Storage::disk('public')->exists($company->favicon)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($company->favicon);
+            }
+        } elseif ($removeFavicon) {
+            // Remove favicon if requested
+            if ($company->favicon && \Illuminate\Support\Facades\Storage::disk('public')->exists($company->favicon)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($company->favicon);
+            }
+            $updateData['favicon'] = null;
+        }
+
         // Only update if there are changes
         if (!empty($updateData)) {
             $company->update($updateData);
         }
 
+        // Invalidate company caches
+        \Illuminate\Support\Facades\Cache::forget("company_{$company->id}");
+        \Illuminate\Support\Facades\Cache::forget("guest_company_logo_favicon");
+
         return response()->json([
             'success' => true,
             'message' => 'Informasi perusahaan berhasil disimpan',
+            'logo_url' => $company->fresh()->logo_url,
+            'favicon_url' => $company->fresh()->favicon_url,
         ]);
     }
 }

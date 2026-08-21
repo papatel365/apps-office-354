@@ -1691,10 +1691,17 @@ function masterDataManager() {
                     this.faviconPreview = null;
                     this.removeLogoFlag = '0';
                     this.removeFaviconFlag = '0';
+                    // Update with actual URLs from server (persistent storage URLs)
                     if (data.logo_url) this.companyInfo.logo_url = data.logo_url;
                     if (data.favicon_url) this.companyInfo.favicon_url = data.favicon_url;
+                    // If logo was removed, clear the preview
+                    if (this.removeLogoFlag === '1' || (this.removeLogoFlag === '0' && !this.logoPreview)) {
+                        // Keep the companyInfo.logo_url from server response
+                    }
                     logoInput.value = '';
                     faviconInput.value = '';
+                    // Reload company info to ensure we have the latest data
+                    await this.fetchCompanyInfo();
                 } else {
                     this.showToast(extractErrorMessage(data, 'Gagal menyimpan logo & favicon'), 'error');
                 }
