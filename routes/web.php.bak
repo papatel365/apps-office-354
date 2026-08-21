@@ -1,0 +1,790 @@
+<?php
+
+use App\Modules\System\Http\Controllers\AuthController;
+use App\Modules\System\Http\Controllers\DashboardController;
+use App\Http\Controllers\CRM\ProjectController;
+use App\Http\Controllers\CRM\TaskController;
+use App\Http\Controllers\CRM\AssetCategoryController;
+use App\Http\Controllers\CRM\AssetController;
+use App\Http\Controllers\CRM\CompanyController;
+use App\Http\Controllers\CRM\DivisionController;
+use App\Http\Controllers\HRD\HRDController;
+use App\Http\Controllers\HRD\HRReportController;
+use App\Http\Controllers\HRD\EmployeeWizardController;
+use App\Http\Controllers\HRD\EmployeeController;
+use App\Http\Controllers\HRD\AttendanceController;
+use App\Http\Controllers\HRD\ReportController;
+use App\Http\Controllers\CRM\SettingsController;
+use App\Http\Controllers\CRM\MasterDataController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+
+/*
+|--------------------------------------------------------------------------
+| Storage Serve Routes (Fallback for Windows without symlink)
+|--------------------------------------------------------------------------
+*/
+
+// Serve files from storage/app/public/profile
+Route::get('/storage/profile/{filename}', function ($filename) {
+    $path = 'profile/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return response($file, 200)->header('Content-Type', $type);
+})->where('filename', '[\w\-\.]+');
+
+// Serve files from storage/app/public/avatars
+Route::get('/storage/avatars/{filename}', function ($filename) {
+    $path = 'avatars/' . $filename;
+
+    if (!Storage::disk('public')->exists($path)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($path);
+    $type = Storage::disk('public')->mimeType($path);
+
+    return response($file, 200)->header('Content-Type', $type);
+})->where('filename', '[\w\-\.]+');
+
+// Serve files from storage/app/public/assets
+Route::get('/storage/assets/{path}', function ($path) {
+    $fullPath = 'assets/' . $path;
+
+    if (!Storage::disk('public')->exists($fullPath)) {
+        abort(404);
+    }
+
+    $file = Storage::disk('public')->get($fullPath);
+    $type = Storage::disk('public')->mimeType($fullPath);
+
+    return response($file, 200)->header('Content-Type', $type);
+})->where('path', '.*');
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', fn() => redirect()->route('login'));
+
+// DEBUG ROUTES - Remove in production
+Route::get('/debug/user', function () {
+    $user = auth()->user();
+    return response()->json([
+        'logged_in' => $user ? true : false,
+        'user' => $user ? [
+            'id' => $user->id,
+            'email' => $user->email,
+            'company_role' => $user->company_role,
+            'is_developer' => $user->is_developer,
+            'is_director' => $user->is_director,
+            'is_owner' => $user->is_owner,
+            'is_company_admin' => $user->is_company_admin,
+            'company_id' => $user->company_id,
+            'tenant_id' => $user->tenant_id,
+        ] : null,
+        'session_id' => session()->getId(),
+    ]);
+})->middleware(['auth']);
+
+// DEBUG: Check sidebar permission logic
+Route::get('/debug/sidebar-check', function () {
+    $user = auth()->user();
+    $company = $user->company;
+
+    $result = [
+        'user_id' => $user->id,
+        'company_role' => $user->company_role,
+        'is_director' => $user->is_director,
+        'company_id' => $user->company_id,
+        'canAccessCompanyDetail' => $user->is_owner || $user->is_director || $user->is_company_admin,
+        'company' => $company ? ['id' => $company->id, 'name' => $company->name] : null,
+    ];
+
+    return response()->json($result);
+})->middleware(['auth']);
+
+/*
+|--------------------------------------------------------------------------
+| Guest Routes (No Auth Required)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('guest')->group(function () {
+    Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [AuthController::class, 'login'])->name('login.store')->middleware('throttle:5,1');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (All Users - Logout Only)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Laporan Routes - Top Level (New URL Structure)
+|--------------------------------------------------------------------------
+*/
+// Redirect old URLs to new ones for backward compatibility
+Route::middleware(['auth', 'tenant.auth'])->group(function () {
+    Route::get('/administrasi/laporan/attendance', function () {
+        return redirect()->route('laporan.absensi', 301);
+    })->name('administrasi.laporan.attendance.redirect');
+
+    Route::get('/administrasi/laporan/employees', function () {
+        return redirect()->route('laporan.karyawan', 301);
+    })->name('administrasi.laporan.employees.redirect');
+});
+
+// New laporan routes at root level
+Route::middleware(['auth', 'tenant.auth', 'sidebar.permission:staff_reports'])->group(function () {
+    Route::get('/laporan', function () {
+        return redirect()->route('laporan.absensi', 301);
+    })->name('laporan.index.redirect');
+
+    Route::get('/laporan/absensi', [App\Http\Controllers\HRD\HRReportController::class, 'attendance'])->name('laporan.absensi');
+    Route::get('/laporan/karyawan', [App\Http\Controllers\HRD\HRReportController::class, 'employees'])->name('laporan.karyawan');
+
+    // Report Exports with type parameter (type is passed via URL segment)
+    Route::get('/laporan/absensi/export/pdf/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportPdf'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.absensi.export.pdf');
+    Route::get('/laporan/absensi/export/excel/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportExcel'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.absensi.export.excel');
+    Route::get('/laporan/absensi/export/word/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportWord'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.absensi.export.word');
+
+    Route::get('/laporan/karyawan/export/pdf/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportPdf'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.karyawan.export.pdf');
+    Route::get('/laporan/karyawan/export/excel/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportExcel'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.karyawan.export.excel');
+    Route::get('/laporan/karyawan/export/word/{type}', [App\Http\Controllers\HRD\HRReportController::class, 'exportWord'])
+        ->where('type', '[a-z]+')
+        ->name('laporan.karyawan.export.word');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Tenant Mode)
+|--------------------------------------------------------------------------
+| All routes here require the user to be authenticated AND a tenant member.
+| Developers are blocked from accessing tenant routes (403 Forbidden).
+*/
+Route::middleware(['auth', 'tenant.auth'])->group(function () {
+
+    /*
+    |--------------------------------------------------------------------------
+    | Beranda - accessible to ALL logged-in users
+    | Data is filtered by scope permissions
+    |--------------------------------------------------------------------------
+    */
+    // Redirect old /dashboard URL to /beranda for backward compatibility
+    Route::get('dashboard', function () {
+        return redirect()->route('beranda');
+    })->name('dashboard');
+
+    Route::get('beranda', [DashboardController::class, 'index'])->name('beranda');
+
+    // Permission Test (for debugging)
+    Route::get('permission-test', [\App\Http\Controllers\CRM\PermissionTestController::class, 'index'])->name('permission-test');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pengaturan Module - accessible to all logged-in users
+    |--------------------------------------------------------------------------
+    */
+    // Pengaturan index - redirect to Pengaturan Umum
+    Route::get('/pengaturan', function () {
+        return redirect()->route('pengaturan.umum.index', [], 301);
+    })->name('pengaturan.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | CRM Permissions - accessible to all logged-in users
+    |--------------------------------------------------------------------------
+    */
+    // Redirect old URL to new URL
+    Route::get('/crm/permissions', function () {
+        return redirect()->route('pengaturan.hak_akses.index', [], 301);
+    })->name('crm.permissions.old');
+
+    Route::prefix('pengaturan/hak-akses')->name('pengaturan.hak_akses.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CRM\CrmPermissionController::class, 'index'])->name('index');
+        Route::get('/{userId}', [\App\Http\Controllers\CRM\CrmPermissionController::class, 'getUserPermissions'])->name('show');
+        Route::put('/{userId}', [\App\Http\Controllers\CRM\CrmPermissionController::class, 'updateUserPermissions'])->name('update');
+        Route::post('/{userId}/reset', [\App\Http\Controllers\CRM\CrmPermissionController::class, 'resetUserPermissions'])->name('reset');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Projects & Tasks - requires sidebar.projects permission
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['sidebar.permission:projects'])->group(function () {
+        // Project Timeline (Gantt Chart) - must be before resource route
+        Route::get('projects/timeline', [ProjectController::class, 'timeline'])->name('projects.timeline');
+
+        // Project Trash
+        Route::get('projects/trash', [ProjectController::class, 'trash'])->name('projects.trash');
+        Route::post('projects/trash/empty', [ProjectController::class, 'emptyTrash'])->name('projects.trash.empty');
+        Route::post('projects/{id}/restore', [ProjectController::class, 'restore'])->name('projects.restore');
+        Route::delete('projects/{id}/force-delete', [ProjectController::class, 'forceDelete'])->name('projects.force-delete');
+
+        Route::resource('projects', ProjectController::class);
+
+        // Project Dashboard
+        Route::get('projects/{project}/dashboard', [\App\Http\Controllers\CRM\ProjectController::class, 'dashboard'])->name('projects.dashboard');
+        Route::get('projects/{project}/dashboard-data', [\App\Http\Controllers\CRM\ProjectController::class, 'dashboardData'])->name('projects.dashboard.data');
+
+        // Project Members
+        Route::resource('projects.members', \App\Http\Controllers\CRM\ProjectMemberController::class)->shallow()->except(['index', 'show', 'create', 'edit']);
+        Route::get('projects/{project}/members/available-users', [\App\Http\Controllers\CRM\ProjectMemberController::class, 'availableUsers'])->name('projects.members.available-users');
+
+        // Project Tasks (nested under project)
+        Route::get('projects/{project}/tasks/create', [\App\Http\Controllers\CRM\TaskController::class, 'create'])->name('projects.tasks.create');
+        Route::post('projects/{project}/tasks', [\App\Http\Controllers\CRM\TaskController::class, 'store'])->name('projects.tasks.store');
+
+        // Project Milestones
+        Route::get('projects/{project}/milestones', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'index'])->name('projects.milestones.index');
+        Route::get('projects/{project}/milestones/data', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'data'])->name('projects.milestones.data');
+        Route::get('projects/{project}/milestones/create', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'create'])->name('projects.milestones.create');
+        Route::get('projects/{project}/milestones/{milestone}', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'show'])->name('projects.milestones.show');
+        Route::get('projects/{project}/milestones/{milestone}/edit', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'edit'])->name('projects.milestones.edit');
+        Route::post('projects/{project}/milestones', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'store'])->name('projects.milestones.store');
+        Route::patch('projects/{project}/milestones/{milestone}', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'update'])->name('projects.milestones.update');
+        Route::patch('projects/{project}/milestones/{milestone}/progress', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'updateProgress'])->name('projects.milestones.progress');
+        Route::patch('projects/{project}/milestones/{milestone}/status', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'quickStatus'])->name('projects.milestones.status');
+        Route::patch('projects/{project}/milestones/{milestone}/start', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'start'])->name('projects.milestones.start');
+        Route::patch('projects/{project}/milestones/{milestone}/complete', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'complete'])->name('projects.milestones.complete');
+        Route::patch('projects/{project}/milestones/{milestone}/cancel', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'cancel'])->name('projects.milestones.cancel');
+        Route::patch('projects/{project}/milestones/{milestone}/visibility', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'setVisibility'])->name('projects.milestones.visibility');
+        Route::patch('projects/{project}/milestones/{milestone}/restart', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'restart'])->name('projects.milestones.restart');
+        Route::post('projects/{project}/milestones/reorder', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'reorder'])->name('projects.milestones.reorder');
+        Route::post('projects/{project}/milestones/{milestone}/documentation', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'addDocumentation'])->name('projects.milestones.documentation');
+        Route::delete('projects/{project}/milestones/{milestone}', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'destroy'])->name('projects.milestones.destroy');
+
+        // Milestone Task Management
+        Route::get('projects/{project}/milestones/{milestone}/available-tasks', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'availableTasks'])->name('projects.milestones.available-tasks');
+        Route::post('projects/{project}/milestones/{milestone}/add-tasks', [\App\Http\Controllers\CRM\ProjectMilestoneController::class, 'addTasks'])->name('projects.milestones.add-tasks');
+
+        // Project Custom Routes
+        Route::patch('projects/{project}/complete', [ProjectController::class, 'complete'])->name('projects.complete');
+
+        // Project Files
+        Route::get('projects/{project}/files', [\App\Http\Controllers\CRM\ProjectFileController::class, 'index'])->name('projects.files.index');
+        Route::post('projects/{project}/files', [\App\Http\Controllers\CRM\ProjectFileController::class, 'store'])->name('projects.files.store');
+        Route::get('projects/{project}/files/{file}', [\App\Http\Controllers\CRM\ProjectFileController::class, 'show'])->name('projects.files.show');
+        Route::patch('projects/{project}/files/{file}', [\App\Http\Controllers\CRM\ProjectFileController::class, 'update'])->name('projects.files.update');
+        Route::delete('projects/{project}/files/{file}', [\App\Http\Controllers\CRM\ProjectFileController::class, 'destroy'])->name('projects.files.destroy');
+        Route::get('projects/{project}/files/{file}/download', [\App\Http\Controllers\CRM\ProjectFileController::class, 'download'])->name('projects.files.download');
+        Route::get('projects/{project}/files/{file}/preview', [\App\Http\Controllers\CRM\ProjectFileController::class, 'preview'])->name('projects.files.preview');
+
+        // Project Discussions
+        Route::get('projects/{project}/discussions', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'index'])->name('projects.discussions.index');
+        Route::post('projects/{project}/discussions', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'store'])->name('projects.discussions.store');
+        Route::get('projects/{project}/discussions/{discussion}', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'show'])->name('projects.discussions.show');
+        Route::patch('projects/{project}/discussions/{discussion}', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'update'])->name('projects.discussions.update');
+        Route::delete('projects/{project}/discussions/{discussion}', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'destroy'])->name('projects.discussions.destroy');
+        Route::post('projects/{project}/discussions/{discussion}/reply', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'reply'])->name('projects.discussions.reply');
+        Route::get('projects/{project}/discussions/attachments/{attachment}/download', [\App\Http\Controllers\CRM\ProjectDiscussionController::class, 'downloadAttachment'])->name('projects.discussions.attachments.download');
+
+        // Project Notes
+        Route::get('projects/{project}/notes', [\App\Http\Controllers\CRM\ProjectNoteController::class, 'index'])->name('projects.notes.index');
+        Route::post('projects/{project}/notes', [\App\Http\Controllers\CRM\ProjectNoteController::class, 'store'])->name('projects.notes.store');
+        Route::get('projects/{project}/notes/{note}', [\App\Http\Controllers\CRM\ProjectNoteController::class, 'show'])->name('projects.notes.show');
+        Route::patch('projects/{project}/notes/{note}', [\App\Http\Controllers\CRM\ProjectNoteController::class, 'update'])->name('projects.notes.update');
+        Route::delete('projects/{project}/notes/{note}', [\App\Http\Controllers\CRM\ProjectNoteController::class, 'destroy'])->name('projects.notes.destroy');
+
+        // Project Activities
+        Route::get('projects/{project}/activities', [\App\Http\Controllers\CRM\ProjectActivityController::class, 'index'])->name('projects.activities.index');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Tasks
+        |--------------------------------------------------------------------------
+        */
+        // IMPORTANT: Static routes MUST be defined BEFORE resource routes to avoid
+        // /tasks/{task} catching /tasks/kanban as task="kanban"
+        Route::get('tasks/kanban', [TaskController::class, 'kanban'])->name('tasks.kanban');
+        Route::get('tasks/kanban/data', [TaskController::class, 'kanbanData'])->name('tasks.kanban.data');
+        Route::post('tasks/bulk-move-milestone', [TaskController::class, 'bulkMoveMilestone'])->name('tasks.bulk-move-milestone');
+
+        Route::resource('tasks', TaskController::class);
+        Route::resource('tasks.assignees', \App\Http\Controllers\CRM\TaskAssigneeController::class)->shallow()->except(['index', 'show']);
+
+        // Task Comments
+        Route::resource('tasks.comments', \App\Http\Controllers\CRM\TaskCommentController::class)->shallow()->except(['index', 'show']);
+
+        // Task Custom Routes
+        Route::patch('tasks/{task}/start', [TaskController::class, 'start'])->name('tasks.start');
+        Route::patch('tasks/{task}/complete', [TaskController::class, 'complete'])->name('tasks.complete');
+        Route::patch('tasks/{task}/cancel', [TaskController::class, 'cancel'])->name('tasks.cancel');
+        Route::patch('tasks/{task}/waiting-approval', [TaskController::class, 'submitForApproval'])->name('tasks.waiting-approval');
+        Route::patch('tasks/{task}/approve', [TaskController::class, 'approve'])->name('tasks.approve');
+        Route::patch('tasks/{task}/reject', [TaskController::class, 'reject'])->name('tasks.reject');
+        Route::patch('tasks/{task}/revert-to-do', [TaskController::class, 'revertToDo'])->name('tasks.revert-to-do');
+        Route::patch('tasks/{task}/reopen', [TaskController::class, 'reopen'])->name('tasks.reopen');
+        Route::patch('tasks/{task}/restore', [TaskController::class, 'restore'])->name('tasks.restore');
+        Route::patch('tasks/{task}/move-milestone', [TaskController::class, 'moveMilestone'])->name('tasks.move-milestone');
+        Route::patch('tasks/{task}/update-dates', [TaskController::class, 'updateDates'])->name('tasks.update-dates');
+        Route::patch('tasks/{task}/update-status', [TaskController::class, 'updateStatus'])->name('tasks.update-status');
+
+        // Task Checklists
+        Route::post('tasks/{task}/checklists', [TaskController::class, 'storeChecklist'])->name('tasks.checklists.store');
+        Route::patch('tasks/{task}/checklists/reorder', [TaskController::class, 'reorderChecklists'])->name('tasks.checklists.reorder');
+        Route::patch('checklists/{checklist}', [TaskController::class, 'updateChecklist'])->name('checklists.update');
+        Route::patch('checklists/{checklist}/toggle', [TaskController::class, 'toggleChecklist'])->name('checklists.toggle');
+        Route::delete('checklists/{checklist}', [TaskController::class, 'deleteChecklist'])->name('checklists.destroy');
+
+        // Task Photos/Evidence
+        Route::post('tasks/{task}/photos', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'upload'])->name('tasks.photos.upload');
+        Route::patch('tasks/{task}/photos/{photo}', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'update'])->name('tasks.photos.update');
+        Route::delete('tasks/{task}/photos/{photo}', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'destroy'])->name('tasks.photos.destroy');
+        Route::patch('tasks/{task}/photos/{photo}/restore', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'restore'])->name('tasks.photos.restore');
+        Route::patch('tasks/{task}/photos/reorder', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'reorder'])->name('tasks.photos.reorder');
+        Route::get('tasks/{task}/photos/{photo}/download', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'download'])->name('tasks.photos.download');
+        Route::get('tasks/{task}/photos', [\App\Http\Controllers\CRM\TaskPhotoController::class, 'index'])->name('tasks.photos.index');
+
+        // Work Updates
+        Route::get('tasks/{task}/work-updates', [\App\Http\Controllers\CRM\WorkUpdateController::class, 'index'])->name('tasks.work-updates.index');
+        Route::post('tasks/{task}/work-updates', [\App\Http\Controllers\CRM\WorkUpdateController::class, 'store'])->name('tasks.work-updates.store');
+        Route::delete('tasks/{task}/work-updates/{workUpdate}', [\App\Http\Controllers\CRM\WorkUpdateController::class, 'destroy'])->name('tasks.work-updates.destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Tasks Standalone - requires sidebar.tasks permission (separate from projects)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['sidebar.permission:tasks'])->group(function () {
+        // Tasks - kanban and other views that are not nested under projects
+        Route::get('tasks/kanban', [TaskController::class, 'kanban'])->name('tasks.kanban');
+        Route::get('tasks/kanban/data', [TaskController::class, 'kanbanData'])->name('tasks.kanban.data');
+        Route::post('tasks/bulk-move-milestone', [TaskController::class, 'bulkMoveMilestone'])->name('tasks.bulk-move-milestone');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Asset Management
+    |--------------------------------------------------------------------------
+    */
+    Route::resource('asset-categories', AssetCategoryController::class)->except(['show']);
+    Route::get('asset-categories/filter', [AssetCategoryController::class, 'filter'])->name('asset-categories.filter');
+    Route::get('asset-categories/export', [AssetCategoryController::class, 'export'])->name('asset-categories.export');
+    Route::resource('assets', AssetController::class);
+
+    // Asset Custom Routes
+    Route::patch('assets/{asset}/assign', [AssetController::class, 'assign'])->name('assets.assign');
+    Route::patch('assets/{asset}/unassign', [AssetController::class, 'unassign'])->name('assets.unassign');
+    Route::patch('assets/{asset}/maintenance', [AssetController::class, 'markAsMaintenance'])->name('assets.maintenance');
+    Route::patch('assets/{asset}/available', [AssetController::class, 'markAsAvailable'])->name('assets.available');
+    Route::patch('assets/{asset}/update-status', [AssetController::class, 'updateStatus'])->name('assets.update-status');
+
+    // Asset Photo Routes (JSON API for multi-photo support)
+    Route::delete('assets/{asset}/photo', [AssetController::class, 'deletePhoto'])->name('assets.photo.delete');
+    Route::delete('assets/{asset}/photos', [AssetController::class, 'deletePhotoJson'])->name('assets.photos.delete');
+    Route::delete('assets/{asset}/warranty-card', [AssetController::class, 'deleteWarrantyCard'])->name('assets.warranty-card.delete');
+
+    // QR Scanner
+    Route::get('assets/scanner', [\App\Http\Controllers\CRM\QRScannerController::class, 'index'])->name('assets.scanner');
+    Route::get('assets/scanner/lookup', [\App\Http\Controllers\CRM\QRScannerController::class, 'lookup'])->name('assets.scanner.lookup');
+    Route::post('assets/scanner/update-status', [\App\Http\Controllers\CRM\QRScannerController::class, 'updateStatus'])->name('assets.scanner.update-status');
+
+    // Asset Allocations
+    Route::resource('assets.allocations', \App\Http\Controllers\CRM\AssetAllocationController::class)->shallow()->except(['index', 'show']);
+    Route::patch('assets/{asset}/allocations/{allocation}/return', [\App\Http\Controllers\CRM\AssetAllocationController::class, 'return'])->name('assets.allocations.return');
+
+    // Asset Check-in/Check-out
+    Route::resource('assets.checkin-checkout', \App\Http\Controllers\CRM\AssetCheckinCheckoutController::class)->shallow()->except(['index', 'show']);
+
+    // Asset Reservations
+    Route::resource('assets.reservations', \App\Http\Controllers\CRM\AssetReservationController::class)->shallow()->except(['index', 'show']);
+    Route::patch('assets/{asset}/reservations/{reservation}/approve', [\App\Http\Controllers\CRM\AssetReservationController::class, 'approve'])->name('assets.reservations.approve');
+    Route::patch('assets/{asset}/reservations/{reservation}/reject', [\App\Http\Controllers\CRM\AssetReservationController::class, 'reject'])->name('assets.reservations.reject');
+
+    // Asset Maintenance
+    Route::resource('assets.maintenance', \App\Http\Controllers\CRM\AssetMaintenanceController::class)->shallow()->except(['index', 'show']);
+    Route::patch('assets/{asset}/maintenance/{maintenance}/start', [\App\Http\Controllers\CRM\AssetMaintenanceController::class, 'start'])->name('assets.maintenance.start');
+    Route::patch('assets/{asset}/maintenance/{maintenance}/complete', [\App\Http\Controllers\CRM\AssetMaintenanceController::class, 'complete'])->name('assets.maintenance.complete');
+
+    // Asset Transfers
+    Route::resource('assets.transfers', \App\Http\Controllers\CRM\AssetTransferController::class)->shallow()->except(['index', 'show']);
+    Route::patch('assets/{asset}/transfers/{transfer}/approve', [\App\Http\Controllers\CRM\AssetTransferController::class, 'approve'])->name('assets.transfers.approve');
+    Route::patch('assets/{asset}/transfers/{transfer}/complete', [\App\Http\Controllers\CRM\AssetTransferController::class, 'complete'])->name('assets.transfers.complete');
+    Route::post('assets/{asset}/transfers/{transfer}/add-photos', [\App\Http\Controllers\CRM\AssetTransferController::class, 'addPhotos'])->name('assets.transfers.add-photos');
+    Route::post('assets/{asset}/transfers/{transfer}/remove-photo', [\App\Http\Controllers\CRM\AssetTransferController::class, 'removePhoto'])->name('assets.transfers.remove-photo');
+
+    // Asset Photos (Multi-Photo Support)
+    Route::get('assets/{asset}/photos', [\App\Http\Controllers\CRM\AssetPhotoController::class, 'index'])->name('assets.photos.index');
+    Route::post('assets/{asset}/photos', [\App\Http\Controllers\CRM\AssetPhotoController::class, 'upload'])->name('assets.photos.upload');
+    Route::delete('assets/{asset}/photos/{photo}', [\App\Http\Controllers\CRM\AssetPhotoController::class, 'destroy'])->name('assets.photos.destroy');
+    Route::patch('assets/{asset}/photos/{photo}/cover', [\App\Http\Controllers\CRM\AssetPhotoController::class, 'setCover'])->name('assets.photos.set-cover');
+    Route::patch('assets/{asset}/photos/reorder', [\App\Http\Controllers\CRM\AssetPhotoController::class, 'reorder'])->name('assets.photos.reorder');
+
+    // Asset Activities (Timeline)
+    Route::get('assets/{asset}/activities', [\App\Http\Controllers\CRM\AssetActivityController::class, 'timeline'])->name('assets.activities.timeline');
+    Route::get('assets/{asset}/activities/actions', [\App\Http\Controllers\CRM\AssetActivityController::class, 'availableActions'])->name('assets.activities.actions');
+
+    // Activity CRUD routes
+    Route::post('assets/{asset}/activities/allocation', [\App\Http\Controllers\CRM\AssetActivityController::class, 'allocate'])->name('assets.activities.allocation');
+    Route::patch('assets/{asset}/activities/complete-allocation', [\App\Http\Controllers\CRM\AssetActivityController::class, 'completeAllocation'])->name('assets.activities.complete-allocation');
+
+    Route::post('assets/{asset}/activities/check-out', [\App\Http\Controllers\CRM\AssetActivityController::class, 'checkOut'])->name('assets.activities.check-out');
+
+    Route::post('assets/{asset}/activities/reservation', [\App\Http\Controllers\CRM\AssetActivityController::class, 'reserve'])->name('assets.activities.reservation');
+    Route::patch('assets/{asset}/activities/complete-reservation', [\App\Http\Controllers\CRM\AssetActivityController::class, 'completeReservation'])->name('assets.activities.complete-reservation');
+
+    Route::post('assets/{asset}/activities/check-in', [\App\Http\Controllers\CRM\AssetActivityController::class, 'checkIn'])->name('assets.activities.check-in');
+
+    Route::post('assets/{asset}/activities/transfer', [\App\Http\Controllers\CRM\AssetActivityController::class, 'transfer'])->name('assets.activities.transfer');
+    Route::patch('assets/{asset}/activities/{activity}/complete-transfer', [\App\Http\Controllers\CRM\AssetActivityController::class, 'completeTransfer'])->name('assets.activities.complete-transfer');
+
+    Route::post('assets/{asset}/activities/recall', [\App\Http\Controllers\CRM\AssetActivityController::class, 'recall'])->name('assets.activities.recall');
+
+    Route::post('assets/{asset}/activities/maintenance', [\App\Http\Controllers\CRM\AssetActivityController::class, 'maintenance'])->name('assets.activities.maintenance');
+    Route::patch('assets/{asset}/activities/complete-maintenance', [\App\Http\Controllers\CRM\AssetActivityController::class, 'completeMaintenance'])->name('assets.activities.complete-maintenance');
+
+    Route::patch('assets/{asset}/activities/{activity}/cancel', [\App\Http\Controllers\CRM\AssetActivityController::class, 'cancel'])->name('assets.activities.cancel');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Companies (Multi-Tenant Management)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['auth'])->prefix('companies')->name('companies.')->group(function () {
+        Route::get('/', [CompanyController::class, 'index'])->name('index');
+        Route::get('/create', [CompanyController::class, 'create'])->name('create');
+        Route::post('/', [CompanyController::class, 'store'])->name('store');
+        Route::get('/{company}', [CompanyController::class, 'show'])->name('show');
+        Route::get('/{company}/edit', [CompanyController::class, 'edit'])->name('edit');
+        Route::put('/{company}', [CompanyController::class, 'update'])->name('update');
+        Route::delete('/{company}', [CompanyController::class, 'destroy'])->name('destroy');
+
+        // Member management
+        Route::get('/{company}/members/create', [CompanyController::class, 'createMember'])->name('members.create');
+        Route::post('/{company}/members', [CompanyController::class, 'storeMember'])->name('members.store');
+        Route::get('/{company}/members/{user}/edit', [CompanyController::class, 'editMember'])->name('members.edit');
+        Route::put('/{company}/members/{user}', [CompanyController::class, 'updateMember'])->name('members.update');
+        Route::delete('/{company}/members/{user}', [CompanyController::class, 'destroyMember'])->name('members.destroy');
+
+        // Division management
+        Route::get('/{company}/divisions', [DivisionController::class, 'index'])->name('divisions.index');
+        Route::get('/{company}/divisions/create', [DivisionController::class, 'create'])->name('divisions.create');
+        Route::post('/{company}/divisions', [DivisionController::class, 'store'])->name('divisions.store');
+        Route::get('/{company}/divisions/{division}/edit', [DivisionController::class, 'edit'])->name('divisions.edit');
+        Route::put('/{company}/divisions/{division}', [DivisionController::class, 'update'])->name('divisions.update');
+        Route::delete('/{company}/divisions/{division}', [DivisionController::class, 'destroy'])->name('divisions.destroy');
+
+        // Company Structure API (Departments, Positions, enhanced Divisions)
+        Route::prefix('structure-api/{company}')->name('structure-api.')->group(function () {
+            // Departments
+            Route::post('/departments', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'storeDepartment'])->name('departments.store');
+            Route::put('/departments/{department}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'updateDepartment'])->name('departments.update');
+            Route::delete('/departments/{department}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'destroyDepartment'])->name('departments.destroy');
+            Route::get('/departments', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getDepartments'])->name('departments.index');
+
+            // Positions
+            Route::post('/positions', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'storePosition'])->name('positions.store');
+            Route::put('/positions/{position}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'updatePosition'])->name('positions.update');
+            Route::delete('/positions/{position}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'destroyPosition'])->name('positions.destroy');
+            Route::get('/positions', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getPositions'])->name('positions.index');
+
+            // Enhanced Divisions
+            Route::post('/divisions', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'storeDivision'])->name('divisions.store');
+            Route::put('/divisions/{division}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'updateDivision'])->name('divisions.update');
+            Route::delete('/divisions/{division}', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'destroyDivision'])->name('divisions.destroy');
+            Route::get('/divisions', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getDivisions'])->name('divisions.index');
+
+            // Members & Employees
+            Route::get('/members', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getMembers'])->name('members.index');
+            Route::get('/employees', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getEmployees'])->name('employees.index');
+            Route::get('/departments/{department}/divisions', [\App\Http\Controllers\CRM\CompanyStructureController::class, 'getDivisionsByDepartment'])->name('divisions.by-department');
+        });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Staff Module - permission check per section
+    |--------------------------------------------------------------------------
+    */
+    // Redirect old /hrd and /karyawan URLs to /administrasi for backward compatibility
+    Route::get('hrd', function () {
+        return redirect()->route('administrasi.dashboard');
+    })->name('hrd.redirect');
+
+    Route::prefix('administrasi')->name('administrasi.')->group(function () {
+        // Administrasi Dashboard
+        Route::middleware(['sidebar.permission:staff_dashboard'])->group(function () {
+            Route::get('/', [HRDController::class, 'index'])->name('dashboard');
+            Route::get('/index', [HRDController::class, 'index'])->name('index');
+        });
+
+        // Employees - requires employees permission
+        Route::middleware(['sidebar.permission:employees'])->group(function () {
+            // Employees - 7-Step Wizard (REQUIRED)
+            Route::get('/data-karyawan', [EmployeeController::class, 'index'])->name('data_karyawan.index');
+            Route::get('/data-karyawan/create', [EmployeeWizardController::class, 'create'])->name('data_karyawan.wizard.create');
+            Route::post('/data-karyawan/wizard', [EmployeeWizardController::class, 'store'])->name('data_karyawan.wizard.store');
+            Route::post('/data-karyawan', [EmployeeController::class, 'store'])->name('data_karyawan.store');
+            Route::get('/data-karyawan/{employee}', [EmployeeController::class, 'show'])->name('data_karyawan.show');
+            Route::get('/data-karyawan/{employee}/edit', [EmployeeWizardController::class, 'edit'])->name('data_karyawan.wizard.edit');
+            Route::put('/data-karyawan/{employee}/wizard', [EmployeeWizardController::class, 'update'])->name('data_karyawan.wizard.update');
+            Route::get('/data-karyawan/{employee}/edit-old', [EmployeeController::class, 'edit'])->name('data_karyawan.edit');
+            Route::put('/data-karyawan/{employee}', [EmployeeController::class, 'update'])->name('data_karyawan.update');
+            Route::delete('/data-karyawan/{employee}', [EmployeeController::class, 'destroy'])->name('data_karyawan.destroy');
+            Route::post('/data-karyawan/{employee}/document', [EmployeeController::class, 'uploadDocument'])->name('data_karyawan.document');
+            Route::get('/data-karyawan/export', [EmployeeController::class, 'export'])->name('data_karyawan.export');
+
+            // Soft Delete - Employee Management
+            Route::get('/data-karyawan/trashed', [EmployeeController::class, 'trashed'])->name('data_karyawan.trashed');
+            Route::get('/data-karyawan/{employee}/delete-data', [EmployeeController::class, 'getDeleteData'])->name('data_karyawan.delete-data');
+            Route::post('/data-karyawan/{employee}/restore', [EmployeeController::class, 'restore'])->name('data_karyawan.restore');
+            Route::post('/data-karyawan/{employee}/resign', [EmployeeController::class, 'resign'])->name('data_karyawan.resign');
+            Route::delete('/data-karyawan/{employee}/force-delete', [EmployeeController::class, 'forceDelete'])->name('data_karyawan.force-delete');
+
+            // Quick create via AJAX for wizard - DEPRECATED
+            // Quick department, division, position, placement are now managed via Pengaturan Umum
+            // Route::post('/data-karyawan/wizard/quick-department', [EmployeeWizardController::class, 'quickCreateDepartment'])->name('data_karyawan.wizard.quick-department');
+            // Route::post('/data-karyawan/wizard/quick-division', [EmployeeWizardController::class, 'quickCreateDivision'])->name('data_karyawan.wizard.quick-division');
+            // Route::post('/data-karyawan/wizard/quick-position', [EmployeeWizardController::class, 'quickCreatePosition'])->name('data_karyawan.wizard.quick-position');
+            // Route::post('/data-karyawan/wizard/quick-placement', [EmployeeWizardController::class, 'quickCreatePlacement'])->name('data_karyawan.wizard.quick-placement');
+            Route::post('/data-karyawan/wizard/quick-shift', [EmployeeWizardController::class, 'quickCreateShift'])->name('data_karyawan.wizard.quick-shift');
+            Route::post('/data-karyawan/wizard/quick-leave-type', [EmployeeWizardController::class, 'quickCreateLeaveType'])->name('data_karyawan.wizard.quick-leave-type');
+
+            // Get data for dropdown refresh
+            Route::get('/data-karyawan/wizard/get-placements', [EmployeeWizardController::class, 'getPlacements'])->name('data_karyawan.wizard.get-placements');
+            Route::get('/data-karyawan/wizard/get-shifts', [EmployeeWizardController::class, 'getShifts'])->name('data_karyawan.wizard.get-shifts');
+            Route::get('/data-karyawan/wizard/get-leave-types', [EmployeeWizardController::class, 'getLeaveTypes'])->name('data_karyawan.wizard.get-leave-types');
+        });
+
+        // Placements (Staff Placement) - requires employees permission
+        Route::middleware(['sidebar.permission:employees'])->group(function () {
+            Route::get('/placements', [App\Http\Controllers\HRD\PlacementController::class, 'index'])->name('placements.index');
+            Route::get('/placements/create', [App\Http\Controllers\HRD\PlacementController::class, 'create'])->name('placements.create');
+            Route::post('/placements', [App\Http\Controllers\HRD\PlacementController::class, 'store'])->name('placements.store');
+            Route::get('/placements/{placement}', [App\Http\Controllers\HRD\PlacementController::class, 'show'])->name('placements.show');
+            Route::get('/placements/{placement}/edit', [App\Http\Controllers\HRD\PlacementController::class, 'edit'])->name('placements.edit');
+            Route::put('/placements/{placement}', [App\Http\Controllers\HRD\PlacementController::class, 'update'])->name('placements.update');
+            Route::delete('/placements/{placement}', [App\Http\Controllers\HRD\PlacementController::class, 'destroy'])->name('placements.destroy');
+            Route::get('/placements/get', [App\Http\Controllers\HRD\PlacementController::class, 'getPlacements'])->name('placements.get');
+            Route::post('/placements/assign', [App\Http\Controllers\HRD\PlacementController::class, 'assignEmployee'])->name('placements.assign');
+        });
+
+        // Attendances - requires attendances permission
+        Route::middleware(['sidebar.permission:attendances'])->group(function () {
+            Route::get('/absen', [AttendanceController::class, 'index'])->name('absen.index');
+            Route::get('/absen/face', [AttendanceController::class, 'faceAttendance'])->name('absen.face');
+            Route::post('/absen/face/submit', [AttendanceController::class, 'submitFaceAttendance'])->name('absen.face.submit');
+            Route::post('/absen/link/request', [AttendanceController::class, 'createLinkRequest'])->name('absen.face.submit-request');
+            Route::get('/absen/link/employees', [AttendanceController::class, 'getLinkableEmployees'])->name('absen.face.linkable-employees');
+            Route::get('/absen/pending-requests', [AttendanceController::class, 'getPendingRequest'])->name('absen.face.pending-requests');
+            Route::post('/absen/link', [AttendanceController::class, 'linkEmployee'])->name('absen.face.link');
+            Route::delete('/absen/link/cancel', [AttendanceController::class, 'cancelLinkRequest'])->name('absen.face.cancel-request');
+            Route::get('/absen/report', [AttendanceController::class, 'report'])->name('absen.report');
+            Route::get('/absen/export', [AttendanceController::class, 'export'])->name('absen.export');
+            Route::get('/absen/calendar-data', [AttendanceController::class, 'calendarData'])->name('absen.calendar-data');
+            // API endpoints for attendance popup cards (admin/director only)
+            Route::get('/absen/summary', [AttendanceController::class, 'getSummary'])->name('absen.summary');
+            Route::get('/absen/present-list', [AttendanceController::class, 'getPresentList'])->name('absen.present-list');
+            Route::get('/absen/not-present-list', [AttendanceController::class, 'getNotPresentList'])->name('absen.not-present-list');
+            Route::get('/absen/calendar-stats', [AttendanceController::class, 'getCalendarStats'])->name('absen.calendar-stats');
+            // Calendar period-based endpoints
+            Route::get('/absen/calendar-present-list', [AttendanceController::class, 'getCalendarPresentList'])->name('absen.calendar-present-list');
+            Route::get('/absen/calendar-not-present-list', [AttendanceController::class, 'getCalendarNotPresentList'])->name('absen.calendar-not-present-list');
+        });
+
+        // Reports - requires staff_reports permission
+        Route::middleware(['sidebar.permission:staff_reports'])->group(function () {
+            Route::get('/laporan', [HRReportController::class, 'index'])->name('laporan.index');
+            Route::get('/laporan/attendance', [HRReportController::class, 'attendance'])->name('laporan.attendance');
+            Route::get('/laporan/employees', [HRReportController::class, 'employees'])->name('laporan.employees');
+            Route::get('/laporan/leaves', [HRReportController::class, 'leaves'])->name('laporan.leaves');
+            Route::get('/laporan/overtime', [HRReportController::class, 'overtime'])->name('laporan.overtime');
+            Route::get('/laporan/salary', [HRReportController::class, 'salary'])->name('laporan.salary');
+            Route::get('/laporan/training', [ReportController::class, 'trainingReport'])->name('laporan.training');
+            Route::get('/laporan/recruitment', [ReportController::class, 'recruitmentReport'])->name('laporan.recruitment');
+
+            // Report Exports
+            Route::get('/laporan/export/pdf/{type}', [HRReportController::class, 'exportPdf'])->name('laporan.export.pdf');
+            Route::get('/laporan/export/excel/{type}', [HRReportController::class, 'exportExcel'])->name('laporan.export.excel');
+            Route::get('/laporan/export/word/{type}', [HRReportController::class, 'exportWord'])->name('laporan.export.word');
+        });
+
+        // Leaves - requires attendances permission
+        Route::middleware(['sidebar.permission:attendances'])->group(function () {
+            Route::get('/leaves', [\App\Http\Controllers\HRD\LeaveController::class, 'index'])->name('leaves.index');
+        });
+
+        // Overtimes - requires attendances permission
+        Route::middleware(['sidebar.permission:attendances'])->group(function () {
+            Route::get('/overtimes', [\App\Http\Controllers\HRD\OvertimeController::class, 'index'])->name('overtimes.index');
+        });
+
+        // Payroll - requires staff_reports permission
+        Route::middleware(['sidebar.permission:staff_reports'])->group(function () {
+            Route::get('/payroll', [\App\Http\Controllers\HRD\PayrollController::class, 'index'])->name('payroll.index');
+        });
+
+        // Audit - requires staff_reports permission
+        Route::middleware(['sidebar.permission:staff_reports'])->group(function () {
+            Route::get('/audit', [\App\Http\Controllers\HRD\AuditController::class, 'index'])->name('audit.index');
+        });
+
+        // Recruitment - requires employees permission
+        Route::middleware(['sidebar.permission:employees'])->group(function () {
+            Route::get('/recruitment', [\App\Http\Controllers\HRD\RecruitmentController::class, 'index'])->name('recruitment.index');
+        });
+
+        // Trainings - requires employees permission
+        Route::middleware(['sidebar.permission:employees'])->group(function () {
+            Route::get('/trainings', [\App\Http\Controllers\HRD\TrainingController::class, 'index'])->name('trainings.index');
+        });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Settings - requires developer/owner/director role
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware(['developer'])->group(function () {
+        Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
+        Route::post('settings', [SettingsController::class, 'update'])->name('settings.crm.update');
+
+        /*
+        |--------------------------------------------------------------------------
+        | Proposal Templates
+        |--------------------------------------------------------------------------
+        */
+        Route::prefix('settings/proposal-templates')->name('settings.proposal-templates.')->group(function () {
+            Route::get('/', [App\Http\Controllers\CRM\ProposalTemplateController::class, 'index'])->name('index');
+        });
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Profile
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\CRM\ProfileController::class, 'index'])->name('index');
+        Route::put('/', [\App\Http\Controllers\CRM\ProfileController::class, 'update'])->name('update');
+        Route::post('/password', [\App\Http\Controllers\CRM\ProfileController::class, 'updatePassword'])->name('password');
+        Route::get('/activity', [\App\Http\Controllers\CRM\ProfileController::class, 'activity'])->name('activity');
+
+        // Profile Photo Routes
+        Route::post('/photo', [\App\Http\Controllers\CRM\ProfileController::class, 'uploadPhoto'])->name('photo.upload');
+        Route::delete('/photo', [\App\Http\Controllers\CRM\ProfileController::class, 'deletePhoto'])->name('photo.delete');
+        Route::get('/photo', [\App\Http\Controllers\CRM\ProfileController::class, 'getPhoto'])->name('photo.get');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [App\Http\Controllers\CRM\NotificationController::class, 'index'])->name('index');
+        Route::get('/all', [App\Http\Controllers\CRM\NotificationController::class, 'all'])->name('all');
+
+        // AJAX/API Endpoints - return JSON
+        Route::get('/dropdown', [App\Http\Controllers\CRM\NotificationController::class, 'dropdown'])->name('dropdown');
+        Route::get('/unread-count', [App\Http\Controllers\CRM\NotificationController::class, 'unreadCount'])->name('unread-count');
+
+        // Actions
+        Route::put('/{id}/read', [App\Http\Controllers\CRM\NotificationController::class, 'markAsRead'])->name('read');
+        Route::put('/read-all', [App\Http\Controllers\CRM\NotificationController::class, 'markAllAsRead'])->name('read-all');
+        Route::delete('/{id}', [App\Http\Controllers\CRM\NotificationController::class, 'destroy'])->name('destroy');
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Data Backup Routes
+    |--------------------------------------------------------------------------
+    */
+    // Redirect old URL to new URL
+    Route::get('/backup', function () {
+        return redirect()->route('pengaturan.backup.index', [], 301);
+    })->name('backup.old');
+
+    Route::prefix('pengaturan/backup')
+        ->name('pengaturan.backup.')
+        ->middleware(['auth', 'backup.access'])
+        ->group(function () {
+            // Dashboard
+            Route::get('/', [\App\Http\Controllers\CRM\BackupController::class, 'index'])->name('index');
+
+            // History
+            Route::get('/history', [\App\Http\Controllers\CRM\BackupController::class, 'history'])->name('history');
+
+            // Settings
+            Route::match(['get', 'put'], '/settings', [\App\Http\Controllers\CRM\BackupController::class, 'index'])->name('settings');
+
+            // Backup Actions
+            Route::post('/database', [\App\Http\Controllers\CRM\BackupController::class, 'backupDatabase'])->name('database');
+            Route::post('/file', [\App\Http\Controllers\CRM\BackupController::class, 'backupFiles'])->name('file');
+            Route::post('/full', [\App\Http\Controllers\CRM\BackupController::class, 'backupFull'])->name('full');
+
+            // Backup Management
+            Route::get('/{backup}/download', [\App\Http\Controllers\CRM\BackupController::class, 'download'])->name('download');
+            Route::get('/{backup}/restore', [\App\Http\Controllers\CRM\BackupController::class, 'restoreShow'])->name('restore.show');
+            Route::post('/{backup}/restore', [\App\Http\Controllers\CRM\BackupController::class, 'restore'])->name('restore');
+            Route::delete('/{backup}', [\App\Http\Controllers\CRM\BackupController::class, 'destroy'])->name('destroy');
+
+            // Statistics
+            Route::get('/statistics', [\App\Http\Controllers\CRM\BackupController::class, 'statistics'])->name('statistics');
+
+            // Settings Update (separate route)
+            Route::post('/settings', [\App\Http\Controllers\CRM\BackupController::class, 'updateSettings'])->name('settings.update');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Master Data Routes (HRD)
+    |--------------------------------------------------------------------------
+    */
+    Route::prefix('pengaturan/umum')
+        ->name('pengaturan.umum.')
+        ->middleware(['auth'])
+        ->group(function () {
+            Route::get('/', [MasterDataController::class, 'index'])->name('index');
+        });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Utility Routes
+    |--------------------------------------------------------------------------
+    */
+    // Select2 / Autocomplete
+    Route::get('api/users/search', [\App\Http\Controllers\CRM\UserController::class, 'search'])->name('api.users.search');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Developer Center Routes - Loaded from separate file
+|--------------------------------------------------------------------------
+*/
+require __DIR__.'/developer.php';
+
+// DEBUG: Breadcrumb Test
+Route::get('/breadcrumb-test', function () {
+    $routeName = 'staff.data_karyawan.index';
+    $builder = new \App\Services\BreadcrumbBuilder();
+    $definition = $builder::findDefinition($routeName, '');
+    dd('Route: ' . $routeName, 'Definition: ', $definition);
+})->name('breadcrumb-test');
