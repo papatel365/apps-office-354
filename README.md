@@ -219,16 +219,10 @@ cd C:\xampp\htdocs
 Kemudian clone repository Apps Office 354:
 
 ```bash
-git clone <URL_REPOSITORY_APPS_OFFICE_354>
+git clone https://github.com/papatel365/apps-office-354.git
 ```
 
-Contoh:
-
-```bash
-git clone https://github.com/username/apps-office-354.git
-```
-
-> Gunakan URL repository resmi Apps Office 354 yang diberikan oleh PT Pandu Palapa Telematika.
+> Gunakan repository resmi Apps Office 354 milik PT Pandu Palapa Telematika.
 
 ---
 
@@ -466,7 +460,23 @@ Untuk development, `APP_DEBUG=true` dapat digunakan.
 
 ---
 
-# STEP 10 — Bersihkan Cache Laravel
+# STEP 10 — Generate Application Key
+
+Setelah file .env selesai dikonfigurasi, jalankan:
+
+php artisan key:generate
+
+Jika berhasil, akan muncul pesan bahwa application key telah berhasil dibuat.
+
+Periksa .env:
+
+APP_KEY=base64:xxxxxxxxxxxxxxxxxxxxxxxx
+
+Jangan membagikan APP_KEY kepada publik.
+
+---
+
+# STEP 11 — Bersihkan Cache Laravel
 
 Jalankan:
 
@@ -478,7 +488,7 @@ Perintah ini memastikan Laravel menggunakan konfigurasi terbaru dari `.env`.
 
 ---
 
-# STEP 11 — Install Frontend Dependency
+# STEP 12 — Install Frontend Dependency
 
 Jalankan:
 
@@ -498,7 +508,7 @@ akan tersedia.
 
 ---
 
-# STEP 12 — Jalankan Vite
+# STEP 13 — Jalankan Vite
 
 Untuk development, jalankan:
 
@@ -518,7 +528,7 @@ VITE ready
 
 ---
 
-# STEP 13 — Jalankan Laravel
+# STEP 14 — Jalankan Laravel
 
 Buka **terminal baru**.
 
@@ -542,7 +552,7 @@ INFO  Server running on [http://127.0.0.1:8000].
 
 ---
 
-# STEP 14 — Buka Apps Office 354
+# STEP 15 — Buka Apps Office 354
 
 Buka browser.
 
@@ -562,7 +572,7 @@ Jika halaman login Apps Office 354 muncul, berarti aplikasi sudah berhasil dijal
 
 ---
 
-# 🔐 STEP 15 — Login ke Apps Office 354
+# 🔐 STEP 16 — Login ke Apps Office 354
 
 Gunakan akun administrator yang telah disediakan.
 
@@ -601,7 +611,7 @@ Jangan menggunakan password default untuk lingkungan production apabila aplikasi
 
 ---
 
-# 🎯 STEP 16 — Instalasi Berhasil
+# 🎯 STEP 17 — Instalasi Berhasil
 
 Jika Anda sudah sampai pada halaman dashboard setelah login, maka instalasi Apps Office 354 telah berhasil.
 
