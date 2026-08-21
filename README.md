@@ -219,16 +219,10 @@ cd C:\xampp\htdocs
 Kemudian clone repository Apps Office 354:
 
 ```bash
-git clone <URL_REPOSITORY_APPS_OFFICE_354>
+git clone https://github.com/papatel365/apps-office-354.git
 ```
 
-Contoh:
-
-```bash
-git clone https://github.com/username/apps-office-354.git
-```
-
-> Gunakan URL repository resmi Apps Office 354 yang diberikan oleh PT Pandu Palapa Telematika.
+> Gunakan repository resmi Apps Office 354 milik PT Pandu Palapa Telematika.
 
 ---
 
